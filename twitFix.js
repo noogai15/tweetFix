@@ -23,7 +23,11 @@ async function someAsync(array, f) {
 
 const twitterUrls = ["http://twitter.com/", "https://twitter.com/"];
 client.on("message", async (message) => {
-  let url = message.content.match(urlRegex)[0];
+  let urlMatches = message.content.match(urlRegex);
+  if (urlMatches == null) {
+    return;
+  }
+  let url = urlMatches[0];
 
   if (message.author.id === client.user.id) {
     return;
