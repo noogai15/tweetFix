@@ -67,4 +67,4 @@ const checkIfVideo = async (link) => {
   return false;
 };
 
-client.login("ODY5OTczMjkwMDc5MzU0ODkx.YQF_ww.0XG2CoAduJQniZuYCQ7qw6dCTXw");
+client.login(process.env.BOT_TOKEN);
