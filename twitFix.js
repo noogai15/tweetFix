@@ -32,26 +32,30 @@ client.on("message", async (message) => {
   if (message.author.id === client.user.id) {
     return;
   }
-  const hasValidTwitterLink = await someAsync(twitterUrls, async (twitterUrl) =>
-    message.content.includes(twitterUrl)
+  const hasValidTwitterLink = await someAsync(
+    twitterUrls,
+    async (twitterUrl) =>
+      message.content.includes(twitterUrl) && message.content.includes("status")
   );
   const isVideo = await checkIfVideo(url);
 
   if (hasValidTwitterLink && isVideo) {
-    let fixedLink = url.replace(/twitter/gm, "fxtwitter"); // 2
-    message.reply(fixedLink); // 3
+    let fixedLink = url.replace(/twitter/gm, "fxtwitter");
+    message.reply(fixedLink);
   }
 });
 
 const checkIfVideo = async (link) => {
   let url = new URL(link);
   let tweetID = url.pathname.split("/").pop();
+  // if (tweetID == null || tweetID.trim() == "") return;
   let apiLink = `https://api.twitter.com/2/tweets/${tweetID}?media.fields=type&expansions=attachments.media_keys`;
   const response = await fetch(apiLink, {
     headers: {
       Authorization: `Bearer ${process.env.BEARER_TOKEN}`,
     },
   });
+  if (!response.ok) return false;
   const data = await response.json();
   console.log("Found Twitter url: " + apiLink);
   console.log(data.includes.media);
