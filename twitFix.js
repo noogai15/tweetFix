@@ -39,7 +39,7 @@ client.on("message", async (message) => {
 
   if (hasValidTwitterLink && isVideo) {
     let fixedLink = url.replace(/twitter/gm, "fxtwitter"); // 2
-    message.channel.send(fixedLink); // 3
+    message.reply(fixedLink); // 3
   }
 });
 
