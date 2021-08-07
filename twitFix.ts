@@ -1,23 +1,31 @@
-require("dotenv/config");
-const Discord = require("discord.js");
-const { URL } = require("url");
-const fetch = require("node-fetch");
+import "dotenv/config";
+import Discord from "discord.js";
+import { URL } from "url";
+import fetch from "node-fetch";
+
 const client = new Discord.Client();
 
 process.on("uncaughtException", (err) => {
+  if (!process.env.BOT_OWNER_ID) {
+    throw Error("missing bot owner id");
+  }
   client.users.cache
     .get(process.env.BOT_OWNER_ID)
-    .send("Bot crashed.\nError: " + err)
-    .then((message) => process.exit(1))
-    .catch(console.log("Message failed to send to Bot owner"));
+    ?.send("Bot crashed.\nError: " + err)
+    .then(() => process.exit(1))
+    .catch(() => console.log("Message failed to send to Bot owner"));
 });
 
 process.on("unhandledRejection", (err) => {
+  if (!process.env.BOT_OWNER_ID) {
+    throw Error("missing bot owner id");
+  }
+
   client.users.cache
     .get(process.env.BOT_OWNER_ID)
-    .send("Bot crashed.\nError: " + err)
+    ?.send("Bot crashed.\nError: " + err)
     .then((message) => process.exit(1))
-    .catch(console.log("Message failed to send to Bot owner"));
+    .catch(() => console.log("Message failed to send to Bot owner"));
 });
 
 const urlRegex =
@@ -27,19 +35,10 @@ const twitterUrls = ["http://twitter.com/", "https://twitter.com/"];
 
 client.on("ready", () => {
   console.log("Started TwitFix");
-  console.log("Username: " + client.user.username);
+  console.log("Username: " + client.user!.username);
 });
 
-async function someAsync(array, f) {
-  for (const element of array) {
-    if (await f(element)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function getURL(string) {
+function getURL(string: string) {
   let urlMatches = string.match(urlRegex);
   if (urlMatches == null) {
     return;
@@ -48,13 +47,17 @@ function getURL(string) {
 }
 
 client.on("message", async (message) => {
-  if (message.author.id === client.user.id) {
+  if (message.author.bot) {
     return;
   }
   let url = getURL(message.content);
-  const hasValidTwitterLink = await someAsync(
-    twitterUrls,
-    async (twitterUrl) => url.includes(twitterUrl) && url.includes("status")
+  if (!url) {
+    return;
+  }
+  const linkUrl = url;
+
+  const hasValidTwitterLink = twitterUrls.some(
+    (twitterUrl) => linkUrl.includes(twitterUrl) && linkUrl.includes("status")
   );
 
   const isVideo = await checkIfVideo(url);
@@ -65,7 +68,17 @@ client.on("message", async (message) => {
   }
 });
 
-const checkIfVideo = async (link) => {
+type TwitterMedia = {
+  type: string;
+};
+
+type TwitterVideoResponse = {
+  includes: {
+    media: TwitterMedia[];
+  };
+};
+
+const checkIfVideo = async (link: string): Promise<boolean> => {
   let url = new URL(link);
   let tweetID = url.pathname.split("/").pop();
   let apiLink = `https://api.twitter.com/2/tweets/${tweetID}?media.fields=type&expansions=attachments.media_keys`;
@@ -76,7 +89,7 @@ const checkIfVideo = async (link) => {
   });
   if (!response.ok) return false;
 
-  const data = await response.json();
+  const data: TwitterVideoResponse = await response.json();
   const mediaType = data.includes.media[0].type;
 
   console.log("Found Twitter url: " + apiLink);

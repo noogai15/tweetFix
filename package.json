@@ -11,12 +11,14 @@
     "querystring": "^0.2.1",
     "readline": "^1.3.0",
     "request": "^2.88.2",
+    "typescript": "^4.3.5",
     "util": "^0.12.4"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node twitFix.js"
+    "build": "tsc twitFix.ts",
+    "start": "ts-node twitFix.ts"
   },
   "author": "",
   "license": "ISC"
