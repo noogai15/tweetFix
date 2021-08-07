@@ -16,11 +16,13 @@
     "typescript": "^4.3.5",
     "util": "^0.12.4"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/node-fetch": "^2.5.12"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc twitFix.ts",
-    "start": "ts-node twitFix.ts"
+    "build": "tsc",
+    "start": "node dist"
   },
   "author": "",
   "license": "ISC"
