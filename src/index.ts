@@ -6,6 +6,7 @@ import fetch from "node-fetch";
 const client = new Discord.Client();
 
 process.on("uncaughtException", (err) => {
+  console.error(err);
   if (!process.env.BOT_OWNER_ID) {
     throw Error("missing bot owner id");
   }
@@ -17,6 +18,8 @@ process.on("uncaughtException", (err) => {
 });
 
 process.on("unhandledRejection", (err) => {
+  console.error(err);
+
   if (!process.env.BOT_OWNER_ID) {
     throw Error("missing bot owner id");
   }
@@ -100,10 +103,7 @@ const checkIfVideo = async (link: string): Promise<boolean> => {
 
   console.log("The media in this tweet is of type: " + mediaType.toUpperCase());
 
-  if (mediaType == "video") {
-    return true;
-  }
-  return false;
+  return mediaType == "video";
 };
 
 client.login(process.env.BOT_TOKEN);
