@@ -13,7 +13,7 @@ process.on("uncaughtException", (err) => {
   }
   client.users.cache
     .get(process.env.BOT_OWNER_ID)
-    ?.send("Bot crashed.\nError: " + err)
+    ?.send("I fucking died.\nError: " + err)
     .then(() => process.exit(1))
     .catch(() => console.log("Message failed to send to Bot owner"));
 });
@@ -27,7 +27,7 @@ process.on("unhandledRejection", (err) => {
 
   client.users.cache
     .get(process.env.BOT_OWNER_ID)
-    ?.send("Bot crashed.\nError: " + err)
+    ?.send("I fucking died.\nError: " + err)
     .then((message) => process.exit(1))
     .catch(() => console.log("Message failed to send to Bot owner"));
 });
