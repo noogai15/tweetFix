@@ -1,7 +1,8 @@
-import "dotenv/config";
 import * as Discord from "discord.js";
-import { URL } from "url";
 import fetch from "node-fetch";
+import { URL } from "url";
+
+import "dotenv/config";
 
 const client = new Discord.Client();
 
@@ -62,10 +63,14 @@ client.on("message", async (message) => {
   const hasValidTwitterLink = twitterUrls.some(
     (twitterUrl) => linkUrl.includes(twitterUrl) && linkUrl.includes("status")
   );
+  if (hasValidTwitterLink) {
+    console.log("Found valid Twitter link");
+  } else {
+    console.log("No valid Twitter link");
+  }
+  const isTwitterVideo = await checkIfVideo(url, hasValidTwitterLink);
 
-  const isVideo = await checkIfVideo(url);
-
-  if (hasValidTwitterLink && isVideo) {
+  if (isTwitterVideo) {
     let fixedLink = url.replace(/twitter/gm, "fxtwitter");
     message.reply(fixedLink);
   }
@@ -81,7 +86,13 @@ type TwitterVideoResponse = {
   };
 };
 
-const checkIfVideo = async (link: string): Promise<boolean> => {
+const checkIfVideo = async (
+  link: string,
+  condition: boolean
+): Promise<boolean> => {
+  if (!condition) {
+    return false;
+  }
   let url = new URL(link);
   let tweetID = url.pathname.split("/").pop();
   let apiLink = `https://api.twitter.com/2/tweets/${tweetID}?media.fields=type&expansions=attachments.media_keys`;
