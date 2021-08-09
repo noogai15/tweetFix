@@ -15,6 +15,9 @@ const server = setupServer(
     if (req.params.id == "1424753751038988289") {
       return res(ctx.json(await import("./fixtures/text.json")));
     }
+    if (req.params.id == "1424470938603638784") {
+      return res(ctx.json(await import("./fixtures/gif.json")));
+    }
   })
 );
 
@@ -42,6 +45,13 @@ describe("valid twitter media response", () => {
         "https://twitter.com/titsay/status/1424364239792136196?s=20"
       )
     ).toBeFalsy();
+  });
+  it("should detect photo in media", async () => {
+    expect(
+      await checkIfVideo(
+        "https://twitter.com/titsay/status/1424470938603638784?s=20"
+      )
+    ).toBeTruthy();
   });
   it("should not detect media in text", async () => {
     expect(

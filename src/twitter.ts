@@ -38,5 +38,5 @@ export const checkIfVideo = async (link: string): Promise<boolean> => {
 
   console.log("The media in this tweet is of type: " + mediaType.toUpperCase());
 
-  return mediaType == "video";
+  return mediaType == "video" || mediaType == "animated_gif";
 };
