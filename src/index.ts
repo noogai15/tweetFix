@@ -5,7 +5,9 @@ import { checkIfVideo } from "./twitter";
 
 import "dotenv/config";
 
-const client = new Discord.Client();
+const client = new Discord.Client({
+  intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES],
+});
 
 process.on("uncaughtException", (err) => {
   console.error(err);
@@ -49,7 +51,8 @@ function getURL(string: string) {
   return urlMatches[0];
 }
 
-client.on("message", async (message) => {
+client.on("messageCreate", async (message) => {
+  console.log("Got message");
   if (message.author.bot) {
     return;
   }
@@ -69,6 +72,7 @@ client.on("message", async (message) => {
   if (isTwitterVideo) {
     let fixedLink = url.replace(/twitter/gm, "fxtwitter");
     message.reply(fixedLink);
+    message.suppressEmbeds(true);
   }
 });
 
