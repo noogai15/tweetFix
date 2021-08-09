@@ -1,3 +1,4 @@
+import { Permissions } from "discord.js";
 import * as Discord from "discord.js";
 
 import { hasValidTwitterLink } from "./link";
@@ -72,7 +73,8 @@ client.on("messageCreate", async (message) => {
   if (isTwitterVideo) {
     let fixedLink = url.replace(/twitter/gm, "fxtwitter");
     message.reply(fixedLink);
-    message.suppressEmbeds(true);
+    //client permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)
+    //message.suppressEmbeds(true);
   }
 });
 
