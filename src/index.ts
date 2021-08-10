@@ -1,13 +1,14 @@
-import { Permissions } from "discord.js";
-import * as Discord from "discord.js";
+import { Message, Permissions } from "discord.js";
+
+const { Client, Intents } = require("discord.js");
 
 import { hasValidTwitterLink } from "./link";
 import { checkIfVideo } from "./twitter";
 
 import "dotenv/config";
 
-const client = new Discord.Client({
-  intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES],
+const client = new Client({
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
 
 process.on("uncaughtException", (err) => {
@@ -32,7 +33,7 @@ process.on("unhandledRejection", (err) => {
   client.users.cache
     .get(process.env.BOT_OWNER_ID)
     ?.send("I fucking died.\nError: " + err)
-    .then((message) => process.exit(1))
+    .then((message: any) => process.exit(1))
     .catch(() => console.log("Message failed to send to Bot owner"));
 });
 
@@ -53,7 +54,7 @@ function getURL(string: string) {
   return urlMatches[0];
 }
 
-client.on("messageCreate", async (message) => {
+client.on("messageCreate", async (message: Message) => {
   console.log("Got message");
   if (message.author.bot) {
     return;
