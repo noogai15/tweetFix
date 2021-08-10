@@ -29,8 +29,10 @@
     "test": "jest",
     "build": "tsc",
     "start": "node dist",
-    "dev": "ts-node-dev src"
+    "dev": "ts-node-dev src",
+    "heroku-postbuild": "echo Skip build on Heroku"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "heroku-run-build-script": true
 }
