@@ -59,8 +59,7 @@ client.on("messageCreate", async (message: Message) => {
   if (message.author.bot) {
     return;
   }
-  if (message.content.includes("Great to have you back"))
-    message.channel.send("Thanks");
+
   let url = getURL(message.content);
   if (!url) {
     return;
