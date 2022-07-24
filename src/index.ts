@@ -1,11 +1,11 @@
-import { Message, Permissions } from "discord.js";
-
-const { Client, Intents } = require("discord.js");
+import { Message } from "discord.js";
 
 import { hasValidTwitterLink } from "./link";
 import { checkIfVideo } from "./twitter";
 
 import "dotenv/config";
+
+const { Client, Intents } = require("discord.js");
 
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
@@ -44,6 +44,7 @@ client.on("ready", () => {
   console.log("Node: " + process.version);
   console.log("Started TwitFix");
   console.log("Username: " + client.user!.username);
+  console.log("TEST");
 });
 
 function getURL(string: string) {
@@ -74,10 +75,8 @@ client.on("messageCreate", async (message: Message) => {
   const isTwitterVideo = await checkIfVideo(url);
 
   if (isTwitterVideo) {
-    let fixedLink = url.replace(/twitter/gm, "fxtwitter");
+    let fixedLink = url.replace(/twitter/gm, "vxtwitter");
     message.reply(fixedLink);
-    //client permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)
-    //message.suppressEmbeds(true);
   }
 });
 
