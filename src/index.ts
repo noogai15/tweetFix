@@ -1,11 +1,11 @@
-import { Message, Permissions } from "discord.js";
-
-const { Client, Intents } = require("discord.js");
+import { Message } from "discord.js";
 
 import { hasValidTwitterLink } from "./link";
 import { checkIfVideo } from "./twitter";
 
 import "dotenv/config";
+
+const { Client, Intents } = require("discord.js");
 
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
@@ -18,7 +18,7 @@ process.on("uncaughtException", (err) => {
   }
   client.users.cache
     .get(process.env.BOT_OWNER_ID)
-    ?.send("I fucking died.\nError: " + err)
+    ?.send("I crashed.\nError: " + err)
     .then(() => process.exit(1))
     .catch(() => console.log("Message failed to send to Bot owner"));
 });
@@ -32,7 +32,7 @@ process.on("unhandledRejection", (err) => {
 
   client.users.cache
     .get(process.env.BOT_OWNER_ID)
-    ?.send("I fucking died.\nError: " + err)
+    ?.send("I crashed.\nError: " + err)
     .then((message: any) => process.exit(1))
     .catch(() => console.log("Message failed to send to Bot owner"));
 });
@@ -74,10 +74,9 @@ client.on("messageCreate", async (message: Message) => {
   const isTwitterVideo = await checkIfVideo(url);
 
   if (isTwitterVideo) {
-    let fixedLink = url.replace(/twitter/gm, "fxtwitter");
+    let fixedLink = url.replace(/twitter/gm, "vxtwitter");
     message.reply(fixedLink);
-    //client permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)
-    //message.suppressEmbeds(true);
+    console.log("TEST");
   }
 });
 
