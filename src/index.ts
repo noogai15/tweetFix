@@ -1,11 +1,9 @@
-import { Message, Permissions } from "discord.js";
-
-const { Client, Intents } = require("discord.js");
-
+import { Message } from "discord.js";
+import "dotenv/config";
 import { hasValidTwitterLink } from "./link";
 import { checkIfVideo } from "./twitter";
 
-import "dotenv/config";
+const { Client, Intents } = require("discord.js");
 
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
@@ -57,6 +55,7 @@ function getURL(string: string) {
 client.on("messageCreate", async (message: Message) => {
   console.log("Got message");
   if (message.author.bot) {
+    message.content.toUpperCase()
     return;
   }
 
@@ -74,10 +73,11 @@ client.on("messageCreate", async (message: Message) => {
   const isTwitterVideo = await checkIfVideo(url);
 
   if (isTwitterVideo) {
-    let fixedLink = url.replace(/twitter/gm, "fxtwitter");
+    let fixedLink = url.replace(/twitter/gm, "vxtwitter");
     message.reply(fixedLink);
-    //client permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)
-    //message.suppressEmbeds(true);
+    console.log("Test")
+    //message.delete()
+    message.suppressEmbeds(true)
   }
 });
 
