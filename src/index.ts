@@ -57,6 +57,7 @@ function getURL(string: string) {
 client.on("messageCreate", async (message: Message) => {
   console.log("Got message");
   if (message.author.bot) {
+    message.content.toUpperCase();
     return;
   }
 
@@ -76,7 +77,9 @@ client.on("messageCreate", async (message: Message) => {
   if (isTwitterVideo) {
     let fixedLink = url.replace(/twitter/gm, "vxtwitter");
     message.reply(fixedLink);
-    console.log("TEST");
+    console.log("Test");
+    //message.delete()
+    message.suppressEmbeds(true);
   }
 });
 
