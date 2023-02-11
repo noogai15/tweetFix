@@ -104,7 +104,7 @@ client.on("messageCreate", function (message) { return __awaiter(void 0, void 0,
                     console.log("Test");
                     //message.delete()
                     client;
-                    permissions.has(Permissions.FLAGS.MANAGE_MESSAGES);
+                    //permissions.has(Permissions.FLAGS.MANAGE_MESSAGES);
                     message.suppressEmbeds(true);
                 }
                 return [2 /*return*/];
