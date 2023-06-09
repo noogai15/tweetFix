@@ -18,7 +18,7 @@
     "util": "^0.12.4"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.24",
+    "@types/jest": "^27.1.5",
     "@types/node-fetch": "^2.5.12",
     "jest": "^27.0.6",
     "msw": "^0.34.0",
