@@ -1,16 +1,20 @@
-import { Message } from "discord.js";
+import { Client, GatewayIntentBits, Message } from "discord.js";
 
 import { hasValidTwitterLink } from "./link";
 import { checkIfVideo } from "./twitter";
 
 import "dotenv/config";
 
-const { Client, Intents } = require("discord.js");
-
 const client = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMembers,
+  ],
 });
 
+client;
 process.on("uncaughtException", (err) => {
   console.error(err);
   if (!process.env.BOT_OWNER_ID) {
@@ -38,7 +42,7 @@ process.on("unhandledRejection", (err) => {
 });
 
 const urlRegex =
-  /((?:(http|https|Http|Https|rtsp|Rtsp):\/\/(?:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,64}(?:\:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,25})?\@)?)?((?:(?:[a-zA-Z0-9][a-zA-Z0-9\-]{0,64}\.)+(?:(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])|(?:biz|b[abdefghijmnorstvwyz])|(?:cat|com|coop|c[acdfghiklmnoruvxyz])|d[ejkmoz]|(?:edu|e[cegrstu])|f[ijkmor]|(?:gov|g[abdefghilmnpqrstuwy])|h[kmnrtu]|(?:info|int|i[delmnoqrst])|(?:jobs|j[emop])|k[eghimnrwyz]|l[abcikrstuvy]|(?:mil|mobi|museum|m[acdghklmnopqrstuvwxyz])|(?:name|net|n[acefgilopruz])|(?:org|om)|(?:pro|p[aefghklmnrstwy])|qa|r[eouw]|s[abcdeghijklmnortuvyz]|(?:tel|travel|t[cdfghjklmnoprtvwz])|u[agkmsyz]|v[aceginu]|w[fs]|y[etu]|z[amw]))|(?:(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])))(?:\:\d{1,5})?)(\/(?:(?:[a-zA-Z0-9\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(?:\%[a-fA-F0-9]{2}))*)?(?:\b|$)/gi;
+  /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/gi;
 
 client.on("ready", () => {
   console.log("Node: " + process.version);
@@ -48,6 +52,8 @@ client.on("ready", () => {
 
 function getURL(string: string) {
   let urlMatches = string.match(urlRegex);
+  console.log("String = " + string);
+  console.log("Matches = " + urlMatches);
   if (urlMatches == null) {
     return;
   }
@@ -55,7 +61,7 @@ function getURL(string: string) {
 }
 
 client.on("messageCreate", async (message: Message) => {
-  console.log("Got message");
+  console.log(`Got message: ${message}`);
   if (message.author.bot) {
     message.content.toUpperCase();
     return;
@@ -63,8 +69,10 @@ client.on("messageCreate", async (message: Message) => {
 
   let url = getURL(message.content);
   if (!url) {
+    console.log("No URL found");
     return;
   }
+  console.log("Got URL");
 
   if (hasValidTwitterLink(url)) {
     console.log("Found valid Twitter link");
@@ -78,7 +86,6 @@ client.on("messageCreate", async (message: Message) => {
     let fixedLink = url.replace(/twitter/gm, "vxtwitter");
     message.reply(fixedLink);
     console.log("Test");
-    //message.delete()
     message.suppressEmbeds(true);
   }
 });
