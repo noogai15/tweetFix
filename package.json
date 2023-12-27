@@ -28,7 +28,7 @@
   "scripts": {
     "test": "jest",
     "build": "tsc",
-    "start": "node dist",
+    "start": "npm run build && node dist",
     "dev": "ts-node-dev src"
   },
   "author": "",

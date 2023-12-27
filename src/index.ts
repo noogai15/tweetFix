@@ -81,13 +81,15 @@ client.on("messageCreate", async (message: Message) => {
     return;
   }
   const isTwitterVideo = await checkIfVideo(url);
+  let fixedLink = "";
 
-  if (isTwitterVideo) {
-    let fixedLink = url.replace(/twitter/gm, "vxtwitter");
-    message.reply(fixedLink);
-    console.log("Test");
-    message.suppressEmbeds(true);
-  }
+  if (!isTwitterVideo) return;
+  if (url.includes("twitter")) fixedLink = url.replace(/twitter/gm, "fxtwitter");
+  else if (url.includes("x.com")) fixedLink = url.replace(/x.com/gm, "fxtwitter.com");
+
+  message.reply(fixedLink);
+  console.log("Test");
+  message.suppressEmbeds(true);
 });
 
 client.login(process.env.BOT_TOKEN);

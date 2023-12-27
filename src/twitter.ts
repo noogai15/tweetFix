@@ -1,42 +1,28 @@
 import fetch from "node-fetch";
-import { URL } from "url";
 
-type TwitterMedia = {
+type MediaInfo = {
   type: string;
 };
 
-type TwitterVideoResponse = {
-  includes?: {
-    media: TwitterMedia[];
-  };
+type Tweet = {
+  media_extended: MediaInfo[];
 };
 
 export const checkIfVideo = async (link: string): Promise<boolean> => {
-  let url = new URL(link);
-  let tweetID = url.pathname.split("/").pop();
-  let apiLink = `https://api.twitter.com/2/tweets/${tweetID}?media.fields=type&expansions=attachments.media_keys`;
-  const response = await fetch(apiLink, {
-    headers: {
-      Authorization: `Bearer ${process.env.BEARER_TOKEN}`,
-    },
-  });
-  const data: TwitterVideoResponse = await response.json();
+  let replacerPattern = new RegExp(
+    "https?://(?:www\\.)?(twitter|x)\\.com/([^/]+/status/\\d+)(\\?s=20)?"
+  );
+
+  let apiLink = link.replace(replacerPattern, "https://api.vxtwitter.com/$2");
+  console.log("🚀 ~ file: twitter.ts:13 ~ checkIfVideo ~ apiLink:", apiLink);
+  const response = await fetch(apiLink);
+  const info: Tweet = await response.json();
   if (!response.ok) {
     console.log("Couldn't get response");
-    console.log(data);
+    console.log(info);
     throw new Error("Couldn't get response");
   }
-
-  if (!data.includes?.media) return false;
-  const mediaType = data.includes.media[0].type;
-
-  console.log("Found Twitter url: " + apiLink);
-  if (!mediaType) {
-    console.log("Could not get type of media from the tweet");
-    return false;
-  }
-
-  console.log("The media in this tweet is of type: " + mediaType.toUpperCase());
-
-  return mediaType == "video" || mediaType == "animated_gif";
+  let media = info.media_extended;
+  if (!media.includes({ type: "video" } || !media.includes({ type: "gif" }))) return false;
+  return true;
 };
