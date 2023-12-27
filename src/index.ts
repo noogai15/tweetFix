@@ -1,7 +1,6 @@
 import { Client, GatewayIntentBits, Message } from "discord.js";
 
 import { hasValidTwitterLink } from "./link";
-import { checkIfVideo } from "./twitter";
 
 import "dotenv/config";
 
@@ -80,16 +79,17 @@ client.on("messageCreate", async (message: Message) => {
     console.log("No valid Twitter link");
     return;
   }
-  const isTwitterVideo = await checkIfVideo(url);
-  let fixedLink = "";
 
-  if (!isTwitterVideo) return;
-  if (url.includes("twitter")) fixedLink = url.replace(/twitter/gm, "fxtwitter");
-  else if (url.includes("x.com")) fixedLink = url.replace(/x.com/gm, "fxtwitter.com");
+  // const isTwitterVideo = await checkIfVideo(url);
+  // if (!isTwitterVideo) return;
+
+  let fixedLink = url.replace(/(twitter|x\.com)/gm, (match) =>
+    match === "twitter" ? "fxtwitter" : "fxtwitter.com"
+  );
 
   message.reply(fixedLink);
   console.log("Test");
-  message.suppressEmbeds(true);
+  message.suppressEmbeds(true); //not really needed right now since Discord shows no Twitter embeds at all anymore
 });
 
 client.login(process.env.BOT_TOKEN);
