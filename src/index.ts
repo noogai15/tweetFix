@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Message } from "discord.js";
+import { Client, GatewayIntentBits, SlashCommandBuilder } from "discord.js";
 
 import { hasValidTwitterLink } from "./link";
 
@@ -47,6 +47,28 @@ client.on("ready", () => {
   console.log("Node: " + process.version);
   console.log("Started TwitFix");
   console.log("Username: " + client.user!.username);
+
+  const fxCommand = new SlashCommandBuilder()
+    .setName("fxt")
+    .setDescription("Replaces a Twitter/X link with an fxtwitter version")
+    .addStringOption((option) =>
+      option.setName("input").setDescription("The Twitter/X link to be fixed").setRequired(true)
+    );
+  client.application?.commands.create(fxCommand);
+});
+
+client.on("interactionCreate", (interaction) => {
+  if (!interaction.isChatInputCommand()) return;
+  if (interaction.commandName == "fxt") {
+    let input = interaction.options.data[0].value;
+
+    if (!input) return;
+    let fixedLink = main(input.toString())!;
+
+    if (!fixedLink)
+      interaction.reply({ content: "Please provide a proper Twitter/X link", ephemeral: true });
+    else interaction.reply(fixedLink);
+  }
 });
 
 function getURL(string: string) {
@@ -58,8 +80,8 @@ function getURL(string: string) {
   return urlMatches[0];
 }
 
-function main(message: Message) {
-  let url = getURL(message.content);
+function main(messageString: string) {
+  let url = getURL(messageString);
   if (!url) return;
   if (!hasValidTwitterLink(url)) return;
 
@@ -69,18 +91,13 @@ function main(message: Message) {
   return fixedLink;
 }
 
-client.on("messageCreate", async (message: Message) => {
-  console.log(`Got message: ${message}`);
-  if (message.author.bot) {
-    message.content.toUpperCase();
-    return;
-  }
+// client.on("messageCreate", async (message: Message) => {
+//   console.log(`Got message: ${message}`);
+//   let fixedLink = main(message);
 
-  let fixedLink = main(message);
-
-  if (fixedLink) message.reply(fixedLink);
-  console.log("Test");
-  message.suppressEmbeds(true); //not really needed right now since Discord shows no Twitter embeds at all anymore
-});
+//   if (fixedLink) message.reply(fixedLink);
+//   console.log("Test");
+//   message.suppressEmbeds(true); //not really needed right now since Discord shows no Twitter embeds at all anymore
+// });
 
 client.login(process.env.BOT_TOKEN);
