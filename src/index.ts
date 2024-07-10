@@ -53,10 +53,20 @@ function getURL(string: string) {
   let urlMatches = string.match(urlRegex);
   console.log("String = " + string);
   console.log("Matches = " + urlMatches);
-  if (urlMatches == null) {
-    return;
-  }
+
+  if (urlMatches == null) return;
   return urlMatches[0];
+}
+
+function main(message: Message) {
+  let url = getURL(message.content);
+  if (!url) return;
+  if (!hasValidTwitterLink(url)) return;
+
+  let fixedLink = url.replace(/(twitter|x\.com)/gm, (match: string) =>
+    match === "twitter" ? "fxtwitter" : "fxtwitter.com"
+  );
+  return fixedLink;
 }
 
 client.on("messageCreate", async (message: Message) => {
@@ -66,28 +76,9 @@ client.on("messageCreate", async (message: Message) => {
     return;
   }
 
-  let url = getURL(message.content);
-  if (!url) {
-    console.log("No URL found");
-    return;
-  }
-  console.log("Got URL");
+  let fixedLink = main(message);
 
-  if (hasValidTwitterLink(url)) {
-    console.log("Found valid Twitter link");
-  } else {
-    console.log("No valid Twitter link");
-    return;
-  }
-
-  // const isTwitterVideo = await checkIfVideo(url);
-  // if (!isTwitterVideo) return;
-
-  let fixedLink = url.replace(/(twitter|x\.com)/gm, (match) =>
-    match === "twitter" ? "fxtwitter" : "fxtwitter.com"
-  );
-
-  message.reply(fixedLink);
+  if (fixedLink) message.reply(fixedLink);
   console.log("Test");
   message.suppressEmbeds(true); //not really needed right now since Discord shows no Twitter embeds at all anymore
 });
